@@ -1,0 +1,73 @@
+body {
+        font-family: Arial, sans-serif;
+        text-align: center;
+        margin: 20px;
+    }
+
+    .board4x4 {
+        display: grid;
+        grid-template-columns: repeat(4, 40px);
+        gap: 2px;
+        width: fit-content;
+        margin: 20px auto;
+        padding: 10px;
+        background: #ddd;
+    }
+
+    .cell {
+        width: 40px;
+        height: 40px;
+        border: 1px solid #999;
+    }
+
+    .black {
+        background: black;
+    }
+
+    .white {
+        background: white;
+    }
+
+    .tiles {
+        display: grid;
+        grid-template-columns: repeat(2, auto);
+        gap: 20px;
+        justify-content: center;
+        margin-top: 20px;
+    }
+
+    .tile {
+        display: grid;
+        grid-template-columns: repeat(2, 40px);
+        gap: 2px;
+        padding: 5px;
+        border: 3px solid #ccc;
+        cursor: pointer;
+    }
+
+    .selected {
+        border-color: red;
+    }
+
+    .modal {
+        display: none;
+        position: fixed;
+        inset: 0;
+        background: rgba(0,0,0,0.5);
+        z-index: 1000;
+    }
+
+    .modal-content {
+        background: white;
+        width: 450px;
+        max-width: 90%;
+        margin: 100px auto;
+        padding: 20px;
+        border-radius: 10px;
+        text-align: center;
+        box-shadow: 0 0 15px rgba(0,0,0,0.3);
+    }
+
+    .modal-content h2 {
+        color: purple;
+    }
