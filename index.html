@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<title>Pattern Puzzle</title>
+
+<link rel="stylesheet" href="styles.css">
+
+</head>
+<body>
+
+<h2>Pattern Puzzle</h2>
+
+<h3>Target Pattern</h3>
+<div id="target" class="board4x4"></div>
+
+<h3>Arrange the Tiles</h3>
+<div id="tiles" class="tiles"></div>
+
+<br>
+<button onclick="newGame()">New Puzzle</button>
+
+<button onclick="showFactModal()">🧠 Did You Know?</button>
+
+<button onclick="generateAllPuzzlesPDF()">Generate All Puzzles PDF</button>
+
+<button onclick="generateUniquePuzzlesPDF()">
+    Generate 24 Unique Puzzles PDF
+</button>
+
+<p id="message"></p>
+
+<div id="factModal" class="modal">
+
+    <div class="modal-content">
+
+        <h2>🧠 Did You Know?</h2>
+
+        <p id="factText"></p>
+
+        <button onclick="closeFactModal()">
+            Close
+        </button>
+
+    </div>
+
+</div>
+
+<script src="script.js" defer></script>
+
+</body>
+</html>
