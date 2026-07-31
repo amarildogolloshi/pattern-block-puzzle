@@ -12,6 +12,13 @@
 
 <h2 class="app-title">Pattern Puzzle</h2>
 
+<div class="game-info">
+    <div class="timer-box">
+        <span class="timer-label">Time</span>
+        <span id="timer" class="timer-value">00:00</span>
+    </div>
+</div>
+
 <h3>Target Pattern</h3>
 <div id="target" class="board4x4"></div>
 
@@ -35,6 +42,7 @@
     <button class="bottom-btn" onclick="newGame()">New</button>
     <button class="bottom-btn" onclick="showFactModal()">Facts</button>
     <button class="bottom-btn" onclick="showPrintOptions()">Print</button>
+    <button class="bottom-btn" onclick="showUserModal()">User</button>
 </div>
 
 <p id="message"></p>
@@ -84,6 +92,37 @@
 
         <div class="modal-footer">
             <button class="cancel-btn" onclick="closePrintModal()">Cancel</button>
+        </div>
+    </div>
+</div>
+
+<div id="userModal" class="modal">
+    <div class="modal-content user-modal-content">
+        <div class="user-modal-header">
+            <div>
+                <h2>User Profile</h2>
+                <p class="user-modal-subtitle">Track your name and past results</p>
+            </div>
+            <button class="user-edit-btn" onclick="toggleNameEdit()">Edit</button>
+        </div>
+
+        <div id="nameDisplayRow" class="name-display-row">
+            <span class="user-modal-name" id="userModalName">Player</span>
+        </div>
+
+        <div id="nameEditRow" class="name-edit-row" style="display:none;">
+            <label for="playerName" class="player-label">Player Name</label>
+            <input id="playerName" class="player-input" type="text" placeholder="Enter your name" maxlength="24">
+            <button class="primary-btn" onclick="saveUserName()">Save</button>
+        </div>
+
+        <div class="user-history-card">
+            <h3>Game History</h3>
+            <ul id="userHistoryList" class="user-history-list"></ul>
+        </div>
+
+        <div class="modal-footer">
+            <button class="cancel-btn" onclick="closeUserModal()">Close</button>
         </div>
     </div>
 </div>

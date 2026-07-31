@@ -1,6 +1,10 @@
 let solution = [];
 let tiles = [];
 let selected = null;
+let timerInterval = null;
+let elapsedSeconds = 0;
+const STORAGE_KEY = "patternPuzzleState";
+const HISTORY_KEY = "patternPuzzleHistory";
 
 const createTile = () => {
   const tile = [false, false, false, false];
@@ -40,6 +44,159 @@ function buildTargetPattern() {
     );
 
     return pattern;
+}
+
+function formatTime(totalSeconds) {
+    const minutes = String(Math.floor(totalSeconds / 60)).padStart(2, "0");
+    const seconds = String(totalSeconds % 60).padStart(2, "0");
+    return `${minutes}:${seconds}`;
+}
+
+function updateTimer() {
+    elapsedSeconds += 1;
+    document.getElementById("timer").textContent = formatTime(elapsedSeconds);
+    saveState();
+}
+
+function startTimer() {
+    clearInterval(timerInterval);
+    elapsedSeconds = 0;
+    document.getElementById("timer").textContent = formatTime(elapsedSeconds);
+    timerInterval = setInterval(updateTimer, 1000);
+}
+
+function saveState() {
+    const playerName = document.getElementById("playerName").value.trim();
+    const state = {
+        playerName,
+        solution,
+        tiles,
+        selected,
+        elapsedSeconds,
+        solved: false
+    };
+
+    localStorage.setItem(STORAGE_KEY, JSON.stringify(state));
+}
+
+function saveHistoryTime() {
+    const playerName = document.getElementById("playerName").value.trim() || "Player";
+    const history = JSON.parse(localStorage.getItem(HISTORY_KEY) || "[]");
+    const completedAt = new Date().toLocaleString();
+
+    history.push({
+        playerName,
+        time: formatTime(elapsedSeconds),
+        completedAt
+    });
+
+    if (history.length > 8) {
+        history.shift();
+    }
+
+    localStorage.setItem(HISTORY_KEY, JSON.stringify(history));
+}
+
+function showUserModal() {
+    const name = document.getElementById("playerName").value.trim() || "Player";
+    const history = JSON.parse(localStorage.getItem(HISTORY_KEY) || "[]");
+    const list = document.getElementById("userHistoryList");
+
+    document.getElementById("userModalName").textContent = name;
+
+    if (history.length === 0) {
+        list.innerHTML = "<li>No completed games yet.</li>";
+    } else {
+        list.innerHTML = history
+            .slice()
+            .reverse()
+            .map(item => `<li>${item.playerName} • ${item.time} • ${item.completedAt}</li>`)
+            .join("");
+    }
+
+    document.getElementById("userModal").style.display = "flex";
+}
+
+function closeUserModal() {
+    document.getElementById("userModal").style.display = "none";
+    document.getElementById("nameEditRow").style.display = "none";
+    document.getElementById("nameDisplayRow").style.display = "flex";
+}
+
+function toggleNameEdit() {
+    const editRow = document.getElementById("nameEditRow");
+    const displayRow = document.getElementById("nameDisplayRow");
+    const input = document.getElementById("playerName");
+
+    if (editRow.style.display === "none") {
+        input.value = document.getElementById("userModalName").textContent;
+        editRow.style.display = "flex";
+        displayRow.style.display = "none";
+        input.focus();
+    } else {
+        editRow.style.display = "none";
+        displayRow.style.display = "flex";
+    }
+}
+
+function saveUserName() {
+    const input = document.getElementById("playerName");
+    const name = input.value.trim() || "Player";
+
+    input.value = name;
+    document.getElementById("userModalName").textContent = name;
+    saveState();
+    toggleNameEdit();
+}
+
+function loadState() {
+    const saved = localStorage.getItem(STORAGE_KEY);
+
+    if (!saved) {
+        return null;
+    }
+
+    try {
+        const state = JSON.parse(saved);
+        if (state && typeof state === "object") {
+            return state;
+        }
+    } catch (error) {
+        console.warn("Unable to load puzzle state", error);
+    }
+
+    return null;
+}
+
+function stopTimer() {
+    clearInterval(timerInterval);
+    timerInterval = null;
+}
+
+function restoreState(state) {
+    if (!state) {
+        return false;
+    }
+
+    const playerNameInput = document.getElementById("playerName");
+    if (state.playerName) {
+        playerNameInput.value = state.playerName;
+    }
+
+    if (Array.isArray(state.solution) && Array.isArray(state.tiles)) {
+        solution = state.solution;
+        tiles = state.tiles;
+        selected = state.selected ?? null;
+        elapsedSeconds = state.elapsedSeconds ?? 0;
+
+        document.getElementById("timer").textContent = formatTime(elapsedSeconds);
+        drawTarget();
+        drawTiles();
+        startTimer();
+        return true;
+    }
+
+    return false;
 }
 
 function drawTarget() {
@@ -129,6 +286,8 @@ function checkWin() {
     const message = document.getElementById("message");
 
     if (solved) {
+        stopTimer();
+        saveHistoryTime();
         showWinModal();
         message.textContent = "";
     } else {
@@ -142,7 +301,7 @@ function showWinModal() {
     const message = document.getElementById("winModalMessage");
 
     title.textContent = "🎉 Congratulations!";
-    message.textContent = "You solved the puzzle!";
+    message.innerHTML = `You solved the puzzle in <strong>${formatTime(elapsedSeconds)}</strong>!`;
     modal.style.display = "flex";
 }
 
@@ -171,11 +330,21 @@ function newGame() {
 
     drawTarget();
     drawTiles();
+    startTimer();
+    saveState();
 
     document.getElementById("message").textContent = "";
 }
 
-newGame();
+const playerNameInput = document.getElementById("playerName");
+playerNameInput.addEventListener("input", saveState);
+
+const restoredState = loadState();
+if (restoredState) {
+    restoreState(restoredState);
+} else {
+    newGame();
+}
 
 const facts = [
     "There are 256 possible puzzle patterns when duplicate tiles are allowed.",
@@ -228,6 +397,7 @@ window.onclick = function(event) {
 
     const modal = document.getElementById("factModal");
     const printModal = document.getElementById("printModal");
+    const userModal = document.getElementById("userModal");
 
     if (event.target === modal) {
         modal.style.display = "none";
@@ -235,6 +405,10 @@ window.onclick = function(event) {
 
     if (event.target === printModal) {
         printModal.style.display = "none";
+    }
+
+    if (event.target === userModal) {
+        userModal.style.display = "none";
     }
 }
 

@@ -1,4 +1,8 @@
-body {
+:root {
+        --cell-gap: 2px;
+    }
+
+    body {
         font-family: Arial, sans-serif;
         text-align: center;
         margin: 16px;
@@ -15,6 +19,51 @@ body {
         color: #111827;
         margin: 8px 0 6px;
         text-shadow: 1px 1px 0 rgba(255,255,255,0.9);
+    }
+
+    .game-info {
+        display: flex;
+        justify-content: center;
+        margin: 6px 0 8px;
+    }
+
+    .timer-box {
+        display: inline-flex;
+        align-items: center;
+        gap: 8px;
+        padding: 8px 12px;
+        border-radius: 999px;
+        background: #111827;
+        color: white;
+        font-weight: 700;
+        box-shadow: 0 2px 6px rgba(0,0,0,0.12);
+    }
+
+    .timer-label {
+        font-size: 0.9rem;
+        text-transform: uppercase;
+        letter-spacing: 0.08em;
+        opacity: 0.9;
+    }
+
+    .timer-value {
+        font-variant-numeric: tabular-nums;
+        font-size: 1rem;
+    }
+
+    .player-label {
+        font-size: 0.9rem;
+        font-weight: 700;
+        color: #111827;
+    }
+
+    .player-input {
+        width: 100%;
+        padding: 8px 10px;
+        border: 1px solid #cbd5e1;
+        border-radius: 8px;
+        font-size: 14px;
+        box-sizing: border-box;
     }
 
     button {
@@ -66,12 +115,13 @@ body {
 
     .board4x4 {
         display: grid;
-        grid-template-columns: repeat(4, minmax(0, 1fr));
-        gap: 2px;
-        width: min(88vw, 320px);
-        max-width: 320px;
-        height: min(88vw, 320px);
-        max-height: 320px;
+        grid-template-columns: repeat(4, 1fr);
+        grid-template-rows: repeat(4, 1fr);
+        gap: var(--cell-gap);
+        width: min(86vw, 300px);
+        aspect-ratio: 1 / 1;
+        max-width: 300px;
+        max-height: 300px;
         margin: 16px auto 12px auto;
         padding: 10px;
         background: #ddd;
@@ -81,7 +131,7 @@ body {
 
     .cell {
         width: 100%;
-        aspect-ratio: 1 / 1;
+        height: 100%;
         border: 1px solid #999;
         box-sizing: border-box;
     }
@@ -105,15 +155,16 @@ body {
 
     .tile {
         display: grid;
-        grid-template-columns: repeat(2, minmax(0, 1fr));
-        gap: 2px;
+        grid-template-columns: repeat(2, 1fr);
+        grid-template-rows: repeat(2, 1fr);
+        gap: var(--cell-gap);
         padding: 5px;
         border: 3px solid #ccc;
         cursor: pointer;
-        width: min(40vw, 150px);
-        max-width: 150px;
-        height: min(40vw, 150px);
-        max-height: 150px;
+        width: min(40vw, 140px);
+        aspect-ratio: 1 / 1;
+        max-width: 140px;
+        max-height: 140px;
         box-sizing: border-box;
     }
 
@@ -138,11 +189,19 @@ body {
         border-radius: 10px;
         text-align: center;
         box-shadow: 0 0 15px rgba(0,0,0,0.3);
+        display: flex;
+        flex-direction: column;
+        gap: 12px;
     }
 
     .modal-content .cancel-btn {
         display: inline-block;
         margin-left: auto;
+    }
+
+    .modal-content > * {
+        width: 100%;
+        box-sizing: border-box;
     }
 
     .modal-content h2 {
@@ -156,6 +215,103 @@ body {
     .print-modal-content {
         max-width: 360px;
         text-align: left;
+    }
+
+    .user-modal-content {
+        max-width: 380px;
+        width: min(92vw, 380px);
+        text-align: left;
+        padding: 20px 18px;
+        max-height: min(82vh, 620px);
+        display: flex;
+        flex-direction: column;
+        box-sizing: border-box;
+    }
+
+    .user-modal-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: flex-start;
+        gap: 10px;
+        margin-bottom: 10px;
+    }
+
+    .user-modal-header h2 {
+        margin: 0 0 4px;
+    }
+
+    .user-modal-subtitle {
+        margin: 0;
+        color: #4b5563;
+        font-size: 0.95rem;
+    }
+
+    .user-edit-btn {
+        background: #111827;
+        color: white;
+        padding: 8px 10px;
+        font-size: 13px;
+    }
+
+    .name-display-row {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        padding: 10px 12px;
+        background: #f3f4f6;
+        border-radius: 10px;
+        margin-bottom: 10px;
+    }
+
+    .name-edit-row {
+        display: flex;
+        flex-direction: column;
+        gap: 8px;
+        padding: 10px 12px;
+        background: #f9fafb;
+        border: 1px solid #e5e7eb;
+        border-radius: 10px;
+        margin-bottom: 10px;
+    }
+
+    .user-modal-name {
+        font-size: 1.05rem;
+        font-weight: 700;
+        color: #111827;
+    }
+
+    .user-history-card {
+        background: #ffffff;
+        border: 1px solid #e5e7eb;
+        border-radius: 10px;
+        padding: 12px;
+        max-height: min(34vh, 220px);
+        overflow-y: auto;
+        flex: 1 1 auto;
+        min-height: 0;
+    }
+
+    .user-history-card h3 {
+        margin: 0 0 8px;
+        font-size: 1rem;
+        color: #111827;
+    }
+
+    .user-history-list {
+        list-style: none;
+        padding: 0;
+        margin: 0;
+        display: flex;
+        flex-direction: column;
+        gap: 8px;
+    }
+
+    .user-history-list li {
+        padding: 8px 10px;
+        border: 1px solid #e5e7eb;
+        border-radius: 8px;
+        background: #f9fafb;
+        font-size: 14px;
     }
 
     .print-modal-content h2,
@@ -187,10 +343,10 @@ body {
 
     .modal-footer {
         display: flex;
-        justify-content: flex-start;
+        justify-content: flex-end;
         align-items: center;
         gap: 10px;
-        margin-top: 16px;
+        margin-top: auto;
         flex-wrap: wrap;
         padding-top: 12px;
         border-top: 1px solid #e5e7eb;
@@ -285,8 +441,7 @@ body {
         }
 
         .board4x4 {
-            width: min(66vw, 188px);
-            height: min(66vw, 188px);
+            width: min(74vw, 188px);
             max-width: 188px;
             max-height: min(40dvh, 188px);
             padding: 8px;
@@ -300,10 +455,9 @@ body {
         }
 
         .tile {
-            width: min(30vw, 90px);
-            height: min(30vw, 90px);
-            max-width: 90px;
-            max-height: 90px;
+            width: min(34vw, 92px);
+            max-width: 92px;
+            max-height: 92px;
         }
     }
 
@@ -325,7 +479,7 @@ body {
         }
 
         .tiles {
-            gap: 8px;
+            gap: 40px;
             margin-top: 8px;
         }
 
