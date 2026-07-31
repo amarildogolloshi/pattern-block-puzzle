@@ -222,7 +222,7 @@ body {
         }
 
         body {
-            margin: 8px 8px 76px 8px;
+            margin: 8px 8px 92px 8px;
             display: flex;
             flex-direction: column;
             align-items: center;
@@ -286,7 +286,7 @@ body {
             width: min(78vw, 240px);
             height: min(78vw, 240px);
             max-width: 240px;
-            max-height: 240px;
+            max-height: calc(100vh - 220px);
             padding: 8px;
             margin: 8px auto 6px auto;
         }
@@ -294,13 +294,14 @@ body {
         .tiles {
             gap: 8px;
             margin-top: 6px;
+            padding-bottom: 16px;
         }
 
         .tile {
             width: min(36vw, 108px);
             height: min(36vw, 108px);
             max-width: 108px;
-            max-height: 108px;
+            max-height: calc(100vh - 260px);
         }
     }
 
