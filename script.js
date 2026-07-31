@@ -129,16 +129,30 @@ function checkWin() {
     const message = document.getElementById("message");
 
     if (solved) {
-        message.innerHTML = `
-            🎉 Congratulations!<br>
-            You solved the puzzle!
-        `;
-
-        message.style.color = "green";
-        message.style.fontSize = "24px";
+        showWinModal();
+        message.textContent = "";
     } else {
         message.textContent = "";
     }
+}
+
+function showWinModal() {
+    const modal = document.getElementById("winModal");
+    const title = document.getElementById("winModalTitle");
+    const message = document.getElementById("winModalMessage");
+
+    title.textContent = "🎉 Congratulations!";
+    message.textContent = "You solved the puzzle!";
+    modal.style.display = "flex";
+}
+
+function closeWinModal() {
+    document.getElementById("winModal").style.display = "none";
+}
+
+function startNewGameFromModal() {
+    closeWinModal();
+    newGame();
 }
 
 
