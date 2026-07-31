@@ -10,7 +10,7 @@
 </head>
 <body>
 
-<h2>Pattern Puzzle</h2>
+<h2 class="app-title">Pattern Puzzle</h2>
 
 <h3>Target Pattern</h3>
 <div id="target" class="board4x4"></div>
@@ -25,11 +25,8 @@
     </div>
 
     <div class="pdf-actions">
-        <button class="pdf-btn primary" onclick="generateAllPuzzlesPDF()">
-            All Puzzles PDF
-        </button>
-        <button class="pdf-btn secondary" onclick="generateUniquePuzzlesPDF()">
-            24 Unique Puzzles PDF
+        <button class="pdf-btn primary" onclick="showPrintOptions()">
+            Print
         </button>
     </div>
 </div>
@@ -37,8 +34,7 @@
 <div class="mobile-bottom-bar">
     <button class="bottom-btn" onclick="newGame()">New</button>
     <button class="bottom-btn" onclick="showFactModal()">Facts</button>
-    <button class="bottom-btn" onclick="generateAllPuzzlesPDF()">PDF</button>
-    <button class="bottom-btn" onclick="generateUniquePuzzlesPDF()">24</button>
+    <button class="bottom-btn" onclick="showPrintOptions()">Print</button>
 </div>
 
 <p id="message"></p>
@@ -51,9 +47,11 @@
 
         <p id="factText"></p>
 
-        <button onclick="closeFactModal()">
-            Close
-        </button>
+        <div class="modal-footer">
+            <button class="cancel-btn" onclick="closeFactModal()">
+                Close
+            </button>
+        </div>
 
     </div>
 
@@ -63,9 +61,29 @@
     <div class="modal-content win-modal-content">
         <h2 id="winModalTitle"></h2>
         <p id="winModalMessage"></p>
-        <div class="modal-actions">
+        <div class="modal-footer">
             <button onclick="startNewGameFromModal()">New Game</button>
-            <button onclick="closeWinModal()">Close</button>
+            <button class="cancel-btn" onclick="closeWinModal()">Close</button>
+        </div>
+    </div>
+</div>
+
+<div id="printModal" class="modal">
+    <div class="modal-content print-modal-content">
+        <h2>Print Options</h2>
+        <p>Choose which puzzle set you want to print.</p>
+
+        <div class="print-options">
+            <button class="primary-btn" onclick="generateAllPuzzlesPDF(); closePrintModal()">
+                All Combinations
+            </button>
+            <button class="secondary-btn" onclick="generateUniquePuzzlesPDF(); closePrintModal()">
+                24 Unique Combinations
+            </button>
+        </div>
+
+        <div class="modal-footer">
+            <button class="cancel-btn" onclick="closePrintModal()">Cancel</button>
         </div>
     </div>
 </div>

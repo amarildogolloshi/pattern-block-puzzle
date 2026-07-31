@@ -4,6 +4,17 @@ body {
         margin: 16px;
         padding: 0;
         box-sizing: border-box;
+        background: linear-gradient(135deg, #f8fafc 0%, #eef2ff 100%);
+    }
+
+    .app-title {
+        font-size: 1.5rem;
+        font-weight: 800;
+        letter-spacing: 0.06em;
+        text-transform: uppercase;
+        color: #111827;
+        margin: 8px 0 6px;
+        text-shadow: 1px 1px 0 rgba(255,255,255,0.9);
     }
 
     button {
@@ -39,15 +50,17 @@ body {
     }
 
     .primary-btn,
-    .pdf-btn.primary {
-        background: #4f46e5;
+    .pdf-btn.primary,
+    .print-modal-content .primary-btn {
+        background: #111827;
         color: white;
     }
 
     .secondary-btn,
-    .pdf-btn.secondary {
+    .pdf-btn.secondary,
+    .print-modal-content .secondary-btn {
         background: #f3f4f6;
-        color: #333;
+        color: #111827;
         border: 1px solid #d1d5db;
     }
 
@@ -63,12 +76,14 @@ body {
         padding: 10px;
         background: #ddd;
         box-sizing: border-box;
+        border: 1px solid #999;
     }
 
     .cell {
         width: 100%;
         aspect-ratio: 1 / 1;
         border: 1px solid #999;
+        box-sizing: border-box;
     }
 
     .black {
@@ -110,12 +125,13 @@ body {
         display: none;
         position: fixed;
         inset: 0;
-        background: rgba(0,0,0,0.5);
+        background: rgba(17, 24, 39, 0.35);
         z-index: 1000;
     }
 
     .modal-content {
-        background: white;
+        background: #ffffff;
+        color: #111827;
         width: min(90vw, 450px);
         margin: 100px auto;
         padding: 20px;
@@ -124,26 +140,75 @@ body {
         box-shadow: 0 0 15px rgba(0,0,0,0.3);
     }
 
+    .modal-content .cancel-btn {
+        display: inline-block;
+        margin-left: auto;
+    }
+
     .modal-content h2 {
-        color: purple;
+        color: #111827;
     }
 
     .win-modal-content {
         max-width: 320px;
     }
 
-    .modal-actions {
+    .print-modal-content {
+        max-width: 360px;
+        text-align: left;
+    }
+
+    .print-modal-content h2,
+    .print-modal-content p {
+        text-align: center;
+    }
+
+    .print-modal-content .print-options {
         display: flex;
-        justify-content: center;
+        flex-direction: column;
+        gap: 10px;
+        margin-top: 14px;
+    }
+
+    .print-modal-content .print-options button {
+        width: 100%;
+    }
+
+    .print-modal-content .modal-footer {
+        display: flex !important;
+        justify-content: flex-end !important;
+        align-items: center !important;
+        margin-top: 16px !important;
+        padding-top: 12px !important;
+        border-top: 1px solid #e5e7eb !important;
+        width: 100% !important;
+        box-sizing: border-box !important;
+    }
+
+    .modal-footer {
+        display: flex;
+        justify-content: flex-start;
+        align-items: center;
         gap: 10px;
         margin-top: 16px;
         flex-wrap: wrap;
+        padding-top: 12px;
+        border-top: 1px solid #e5e7eb;
+        width: 100%;
+        box-sizing: border-box;
     }
 
-    .modal-actions button {
+    .modal-footer button {
         padding: 10px 14px;
         font-size: 15px;
         cursor: pointer;
+    }
+
+    .modal-footer .cancel-btn {
+        margin-left: auto;
+        background: #111827;
+        color: #ffffff;
+        border: 1px solid #111827;
     }
 
     .mobile-bottom-bar {
@@ -151,8 +216,17 @@ body {
     }
 
     @media (max-width: 480px) {
+        html, body {
+            height: 100%;
+            overflow-x: hidden;
+        }
+
         body {
-            margin: 12px;
+            margin: 8px 8px 76px 8px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: flex-start;
         }
 
         .action-panel {
@@ -168,20 +242,32 @@ body {
             bottom: 0;
             z-index: 1000;
             background: #111827;
-            border-top: 1px solid #374151;
             padding: 8px 6px;
-            gap: 6px;
+            gap: 0;
             justify-content: space-around;
+            box-shadow: 0 -1px 0 rgba(255,255,255,0.08);
         }
 
         .bottom-btn {
             flex: 1;
-            background: #1f2937;
+            background: transparent;
             color: white;
-            border: 1px solid #374151;
-            border-radius: 10px;
+            border: none;
+            border-radius: 0;
             padding: 10px 6px;
             font-size: 14px;
+            box-shadow: none;
+            position: relative;
+        }
+
+        .bottom-btn + .bottom-btn::before {
+            content: "";
+            position: absolute;
+            left: 0;
+            top: 6px;
+            bottom: 6px;
+            width: 1px;
+            background: rgba(255,255,255,0.16);
         }
 
         .action-row,
@@ -197,23 +283,24 @@ body {
         }
 
         .board4x4 {
-            width: min(84vw, 280px);
-            height: min(84vw, 280px);
-            max-width: 280px;
-            max-height: 280px;
+            width: min(78vw, 240px);
+            height: min(78vw, 240px);
+            max-width: 240px;
+            max-height: 240px;
             padding: 8px;
+            margin: 8px auto 6px auto;
         }
 
         .tiles {
-            gap: 10px;
-            margin-top: 10px;
+            gap: 8px;
+            margin-top: 6px;
         }
 
         .tile {
-            width: min(38vw, 120px);
-            height: min(38vw, 120px);
-            max-width: 120px;
-            max-height: 120px;
+            width: min(36vw, 108px);
+            height: min(36vw, 108px);
+            max-width: 108px;
+            max-height: 108px;
         }
     }
 

@@ -216,12 +216,25 @@ function closeFactModal() {
     document.getElementById("factModal").style.display = "none";
 }
 
+function showPrintOptions() {
+    document.getElementById("printModal").style.display = "flex";
+}
+
+function closePrintModal() {
+    document.getElementById("printModal").style.display = "none";
+}
+
 window.onclick = function(event) {
 
     const modal = document.getElementById("factModal");
+    const printModal = document.getElementById("printModal");
 
     if (event.target === modal) {
         modal.style.display = "none";
+    }
+
+    if (event.target === printModal) {
+        printModal.style.display = "none";
     }
 }
 
