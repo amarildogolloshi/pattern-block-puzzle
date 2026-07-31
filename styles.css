@@ -6,15 +6,63 @@ body {
         box-sizing: border-box;
     }
 
+    button {
+        border: none;
+        border-radius: 8px;
+        padding: 10px 14px;
+        font-size: 15px;
+        cursor: pointer;
+        transition: transform 0.2s ease, box-shadow 0.2s ease;
+    }
+
+    button:hover {
+        transform: translateY(-1px);
+        box-shadow: 0 3px 8px rgba(0,0,0,0.12);
+    }
+
+    .action-panel {
+        max-width: 620px;
+        margin: 0 auto 18px auto;
+        padding: 14px;
+        border: 1px solid #ddd;
+        border-radius: 12px;
+        background: #fafafa;
+    }
+
+    .action-row,
+    .pdf-actions {
+        display: flex;
+        justify-content: center;
+        gap: 10px;
+        flex-wrap: wrap;
+        margin-top: 8px;
+    }
+
+    .primary-btn,
+    .pdf-btn.primary {
+        background: #4f46e5;
+        color: white;
+    }
+
+    .secondary-btn,
+    .pdf-btn.secondary {
+        background: #f3f4f6;
+        color: #333;
+        border: 1px solid #d1d5db;
+    }
+
     .board4x4 {
         display: grid;
         grid-template-columns: repeat(4, minmax(0, 1fr));
         gap: 2px;
-        width: min(90vw, 320px);
-        margin: 20px auto;
+        width: min(88vw, 320px);
+        max-width: 320px;
+        height: min(88vw, 320px);
+        max-height: 320px;
+        margin: 16px auto 12px auto;
         padding: 10px;
         background: #ddd;
-        aspect-ratio: 1 / 1;
+        box-sizing: border-box;
     }
 
     .cell {
@@ -34,9 +82,10 @@ body {
     .tiles {
         display: grid;
         grid-template-columns: repeat(2, minmax(0, auto));
-        gap: 16px;
+        gap: 12px;
         justify-content: center;
-        margin-top: 20px;
+        margin-top: 12px;
+        align-items: center;
     }
 
     .tile {
@@ -46,8 +95,11 @@ body {
         padding: 5px;
         border: 3px solid #ccc;
         cursor: pointer;
-        width: min(42vw, 160px);
-        max-width: 160px;
+        width: min(40vw, 150px);
+        max-width: 150px;
+        height: min(40vw, 150px);
+        max-height: 150px;
+        box-sizing: border-box;
     }
 
     .selected {
@@ -92,4 +144,105 @@ body {
         padding: 10px 14px;
         font-size: 15px;
         cursor: pointer;
+    }
+
+    .mobile-bottom-bar {
+        display: none;
+    }
+
+    @media (max-width: 480px) {
+        body {
+            margin: 12px;
+        }
+
+        .action-panel {
+            padding: 12px;
+            display: none;
+        }
+
+        .mobile-bottom-bar {
+            display: flex;
+            position: fixed;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            z-index: 1000;
+            background: #111827;
+            border-top: 1px solid #374151;
+            padding: 8px 6px;
+            gap: 6px;
+            justify-content: space-around;
+        }
+
+        .bottom-btn {
+            flex: 1;
+            background: #1f2937;
+            color: white;
+            border: 1px solid #374151;
+            border-radius: 10px;
+            padding: 10px 6px;
+            font-size: 14px;
+        }
+
+        .action-row,
+        .pdf-actions {
+            flex-direction: column;
+            align-items: stretch;
+        }
+
+        .primary-btn,
+        .secondary-btn,
+        .pdf-btn {
+            width: 100%;
+        }
+
+        .board4x4 {
+            width: min(84vw, 280px);
+            height: min(84vw, 280px);
+            max-width: 280px;
+            max-height: 280px;
+            padding: 8px;
+        }
+
+        .tiles {
+            gap: 10px;
+            margin-top: 10px;
+        }
+
+        .tile {
+            width: min(38vw, 120px);
+            height: min(38vw, 120px);
+            max-width: 120px;
+            max-height: 120px;
+        }
+    }
+
+    @media (max-height: 700px) {
+        body {
+            margin: 8px;
+        }
+
+        h2, h3 {
+            margin: 6px 0;
+        }
+
+        .board4x4 {
+            width: min(70vh, 260px);
+            height: min(70vh, 260px);
+            max-width: 260px;
+            max-height: 260px;
+            margin: 8px auto;
+        }
+
+        .tiles {
+            gap: 8px;
+            margin-top: 8px;
+        }
+
+        .tile {
+            width: min(32vh, 110px);
+            height: min(32vh, 110px);
+            max-width: 110px;
+            max-height: 110px;
+        }
     }

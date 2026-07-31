@@ -18,16 +18,28 @@
 <h3>Arrange the Tiles</h3>
 <div id="tiles" class="tiles"></div>
 
-<br>
-<button onclick="newGame()">New Puzzle</button>
+<div class="action-panel">
+    <div class="action-row">
+        <button class="primary-btn" onclick="newGame()">New Puzzle</button>
+        <button class="secondary-btn" onclick="showFactModal()">🧠 Did You Know?</button>
+    </div>
 
-<button onclick="showFactModal()">🧠 Did You Know?</button>
+    <div class="pdf-actions">
+        <button class="pdf-btn primary" onclick="generateAllPuzzlesPDF()">
+            All Puzzles PDF
+        </button>
+        <button class="pdf-btn secondary" onclick="generateUniquePuzzlesPDF()">
+            24 Unique Puzzles PDF
+        </button>
+    </div>
+</div>
 
-<button onclick="generateAllPuzzlesPDF()">Generate All Puzzles PDF</button>
-
-<button onclick="generateUniquePuzzlesPDF()">
-    Generate 24 Unique Puzzles PDF
-</button>
+<div class="mobile-bottom-bar">
+    <button class="bottom-btn" onclick="newGame()">New</button>
+    <button class="bottom-btn" onclick="showFactModal()">Facts</button>
+    <button class="bottom-btn" onclick="generateAllPuzzlesPDF()">PDF</button>
+    <button class="bottom-btn" onclick="generateUniquePuzzlesPDF()">24</button>
+</div>
 
 <p id="message"></p>
 
