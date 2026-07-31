@@ -228,6 +228,8 @@ function drawTiles() {
         tileDiv.className =
             "tile" +
             (selected === index ? " selected" : "");
+        tileDiv.dataset.index = index;
+        tileDiv.style.touchAction = "none";
 
         tile.forEach(cell => {
 
@@ -239,6 +241,82 @@ function drawTiles() {
                 (cell ? "black" : "white");
 
             tileDiv.appendChild(div);
+        });
+
+        tileDiv.addEventListener("pointerdown", (event) => {
+            event.preventDefault();
+            tileDiv.setPointerCapture(event.pointerId);
+            tileDiv.dataset.dragSource = "true";
+            tileDiv.dataset.dragStartX = event.clientX;
+            tileDiv.dataset.dragStartY = event.clientY;
+            tileDiv.dataset.dragMoved = "false";
+            tileDiv.classList.add("dragging");
+            document.querySelectorAll(".tile.drag-over").forEach(otherTile => {
+                otherTile.classList.remove("drag-over");
+            });
+        });
+
+        tileDiv.addEventListener("pointermove", (event) => {
+            if (tileDiv.dataset.dragSource !== "true") {
+                return;
+            }
+
+            const startX = Number(tileDiv.dataset.dragStartX || event.clientX);
+            const startY = Number(tileDiv.dataset.dragStartY || event.clientY);
+            const movedX = event.clientX - startX;
+            const movedY = event.clientY - startY;
+
+            if (Math.abs(movedX) > 8 || Math.abs(movedY) > 8) {
+                tileDiv.dataset.dragMoved = "true";
+                tileDiv.classList.add("dragging");
+
+                const targetElement = document.elementFromPoint(event.clientX, event.clientY);
+                const targetTile = targetElement?.closest(".tile");
+
+                document.querySelectorAll(".tile.drag-over").forEach(otherTile => {
+                    otherTile.classList.remove("drag-over");
+                });
+
+                if (targetTile && targetTile !== tileDiv) {
+                    targetTile.classList.add("drag-over");
+                }
+            }
+        });
+
+        tileDiv.addEventListener("pointerup", (event) => {
+            if (tileDiv.dataset.dragSource !== "true") {
+                return;
+            }
+
+            const moved = tileDiv.dataset.dragMoved === "true";
+            const targetElement = document.elementFromPoint(event.clientX, event.clientY);
+            const targetTile = targetElement?.closest(".tile");
+            const targetIndex = targetTile ? Number(targetTile.dataset.index) : null;
+
+            document.querySelectorAll(".tile.drag-over").forEach(otherTile => {
+                otherTile.classList.remove("drag-over");
+            });
+            tileDiv.classList.remove("dragging");
+            tileDiv.dataset.dragSource = "false";
+            tileDiv.dataset.dragMoved = "false";
+
+            if (moved && targetIndex !== null && targetIndex !== index) {
+                [tiles[index], tiles[targetIndex]] = [tiles[targetIndex], tiles[index]];
+                selected = null;
+                checkWin();
+                drawTiles();
+            } else {
+                selectTile(index);
+            }
+        });
+
+        tileDiv.addEventListener("pointercancel", () => {
+            document.querySelectorAll(".tile.drag-over").forEach(otherTile => {
+                otherTile.classList.remove("drag-over");
+            });
+            tileDiv.classList.remove("dragging");
+            tileDiv.dataset.dragSource = "false";
+            tileDiv.dataset.dragMoved = "false";
         });
 
         tileDiv.onclick = () => selectTile(index);
