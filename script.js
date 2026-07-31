@@ -258,7 +258,7 @@ function createCell(value) {
     `;
 }
 
-function createReusableTilesPage() {
+function createReusableTilesPageForAllPuzzles() {
     return `
         <h2>Reusable Puzzle Tiles</h2>
 
@@ -480,7 +480,7 @@ function generateUniquePuzzlesPDF() {
     let puzzlesHtml = "";
 
     // First page: reusable cut-out tiles
-    puzzlesHtml += createReusableTilesPage();
+    puzzlesHtml += createReusableTilesPageForAllPuzzles();
 
     // Next pages: only target patterns
     uniquePuzzles.forEach(function(puzzle, index) {
@@ -583,12 +583,17 @@ function generateUniquePuzzlesPDF() {
                 }
 
                 .pdf-black {
-                   background-color: black !important;
+                    background-color: #000 !important;
+                    color: #000;
+                    -webkit-print-color-adjust: exact !important;
+                    print-color-adjust: exact !important;
                 }
 
                 .pdf-white {
-                    color: white;
-                    background-color: white;
+                    color: #fff;
+                    background-color: #fff !important;
+                    -webkit-print-color-adjust: exact !important;
+                    print-color-adjust: exact !important;
                 }
 
                 button {

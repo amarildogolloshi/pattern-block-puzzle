@@ -1,22 +1,25 @@
 body {
         font-family: Arial, sans-serif;
         text-align: center;
-        margin: 20px;
+        margin: 16px;
+        padding: 0;
+        box-sizing: border-box;
     }
 
     .board4x4 {
         display: grid;
-        grid-template-columns: repeat(4, 40px);
+        grid-template-columns: repeat(4, minmax(0, 1fr));
         gap: 2px;
-        width: fit-content;
+        width: min(90vw, 320px);
         margin: 20px auto;
         padding: 10px;
         background: #ddd;
+        aspect-ratio: 1 / 1;
     }
 
     .cell {
-        width: 40px;
-        height: 40px;
+        width: 100%;
+        aspect-ratio: 1 / 1;
         border: 1px solid #999;
     }
 
@@ -30,19 +33,21 @@ body {
 
     .tiles {
         display: grid;
-        grid-template-columns: repeat(2, auto);
-        gap: 20px;
+        grid-template-columns: repeat(2, minmax(0, auto));
+        gap: 16px;
         justify-content: center;
         margin-top: 20px;
     }
 
     .tile {
         display: grid;
-        grid-template-columns: repeat(2, 40px);
+        grid-template-columns: repeat(2, minmax(0, 1fr));
         gap: 2px;
         padding: 5px;
         border: 3px solid #ccc;
         cursor: pointer;
+        width: min(42vw, 160px);
+        max-width: 160px;
     }
 
     .selected {
@@ -59,8 +64,7 @@ body {
 
     .modal-content {
         background: white;
-        width: 450px;
-        max-width: 90%;
+        width: min(90vw, 450px);
         margin: 100px auto;
         padding: 20px;
         border-radius: 10px;
