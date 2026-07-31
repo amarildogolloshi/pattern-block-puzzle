@@ -1,23 +1,144 @@
-body {
+:root {
+        --cell-gap: 2px;
+    }
+
+    body {
         font-family: Arial, sans-serif;
         text-align: center;
-        margin: 20px;
+        margin: 16px;
+        padding: 0;
+        box-sizing: border-box;
+        background: linear-gradient(135deg, #f8fafc 0%, #eef2ff 100%);
+    }
+
+    .app-title {
+        font-size: 1.5rem;
+        font-weight: 800;
+        letter-spacing: 0.06em;
+        text-transform: uppercase;
+        color: #111827;
+        margin: 8px 0 6px;
+        text-shadow: 1px 1px 0 rgba(255,255,255,0.9);
+    }
+
+    .game-info {
+        display: flex;
+        justify-content: center;
+        margin: 6px 0 8px;
+    }
+
+    .timer-box {
+        display: inline-flex;
+        align-items: center;
+        gap: 8px;
+        padding: 8px 12px;
+        border-radius: 999px;
+        background: #111827;
+        color: white;
+        font-weight: 700;
+        box-shadow: 0 2px 6px rgba(0,0,0,0.12);
+    }
+
+    .timer-label {
+        font-size: 0.9rem;
+        text-transform: uppercase;
+        letter-spacing: 0.08em;
+        opacity: 0.9;
+    }
+
+    .timer-value {
+        font-variant-numeric: tabular-nums;
+        font-size: 1rem;
+    }
+
+    .player-label {
+        font-size: 0.9rem;
+        font-weight: 700;
+        color: #111827;
+    }
+
+    .player-input {
+        width: 100%;
+        padding: 8px 10px;
+        border: 1px solid #cbd5e1;
+        border-radius: 8px;
+        font-size: 14px;
+        box-sizing: border-box;
+    }
+
+    button {
+        border: none;
+        border-radius: 8px;
+        padding: 10px 14px;
+        font-size: 15px;
+        cursor: pointer;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        min-height: 44px;
+        line-height: 1.2;
+        transition: transform 0.2s ease, box-shadow 0.2s ease;
+    }
+
+    button:hover {
+        transform: translateY(-1px);
+        box-shadow: 0 3px 8px rgba(0,0,0,0.12);
+    }
+
+    .action-panel {
+        max-width: 620px;
+        margin: 0 auto 18px auto;
+        padding: 14px;
+        border: 1px solid #ddd;
+        border-radius: 12px;
+        background: #fafafa;
+    }
+
+    .action-row,
+    .pdf-actions {
+        display: flex;
+        justify-content: center;
+        gap: 10px;
+        flex-wrap: wrap;
+        margin-top: 8px;
+    }
+
+    .primary-btn,
+    .pdf-btn.primary,
+    .print-modal-content .primary-btn {
+        background: #111827;
+        color: white;
+    }
+
+    .secondary-btn,
+    .pdf-btn.secondary,
+    .print-modal-content .secondary-btn {
+        background: #f3f4f6;
+        color: #111827;
+        border: 1px solid #d1d5db;
     }
 
     .board4x4 {
         display: grid;
-        grid-template-columns: repeat(4, 40px);
-        gap: 2px;
-        width: fit-content;
-        margin: 20px auto;
+        grid-template-columns: repeat(4, 1fr);
+        grid-template-rows: repeat(4, 1fr);
+        gap: var(--cell-gap);
+        width: min(86vw, 300px);
+        aspect-ratio: 1 / 1;
+        max-width: 300px;
+        max-height: 300px;
+        margin: 16px auto 12px auto;
         padding: 10px;
         background: #ddd;
+        box-sizing: border-box;
+        border: 1px solid #999;
     }
 
     .cell {
-        width: 40px;
-        height: 40px;
+        width: 100%;
+        height: 100%;
         border: 1px solid #999;
+        box-sizing: border-box;
     }
 
     .black {
@@ -30,44 +151,376 @@ body {
 
     .tiles {
         display: grid;
-        grid-template-columns: repeat(2, auto);
-        gap: 20px;
+        grid-template-columns: repeat(2, minmax(0, auto));
+        gap: 12px;
         justify-content: center;
-        margin-top: 20px;
+        margin-top: 12px;
+        align-items: center;
     }
 
     .tile {
         display: grid;
-        grid-template-columns: repeat(2, 40px);
-        gap: 2px;
+        grid-template-columns: repeat(2, 1fr);
+        grid-template-rows: repeat(2, 1fr);
+        gap: var(--cell-gap);
         padding: 5px;
         border: 3px solid #ccc;
-        cursor: pointer;
+        cursor: grab;
+        user-select: none;
+        width: min(40vw, 140px);
+        aspect-ratio: 1 / 1;
+        max-width: 140px;
+        max-height: 140px;
+        box-sizing: border-box;
+        transition: transform 0.16s ease, box-shadow 0.16s ease, border-color 0.16s ease, opacity 0.16s ease;
+        will-change: transform, box-shadow;
+        position: relative;
+    }
+
+    .tile:hover {
+        transform: translateY(-1px);
+    }
+
+    .tile:active {
+        cursor: grabbing;
+    }
+
+    .tile.dragging {
+        transform: scale(1.05) rotate(-2deg);
+        box-shadow: 0 12px 24px rgba(17, 24, 39, 0.22);
+        border-color: #111827;
+        z-index: 5;
+        opacity: 0.98;
+    }
+
+    .tile.drag-over {
+        transform: scale(1.02);
+        border-color: #2563eb;
+        box-shadow: inset 0 0 0 2px rgba(37, 99, 235, 0.2);
     }
 
     .selected {
         border-color: red;
+        box-shadow: 0 0 0 2px rgba(239, 68, 68, 0.15);
     }
 
     .modal {
         display: none;
         position: fixed;
         inset: 0;
-        background: rgba(0,0,0,0.5);
+        background: rgba(17, 24, 39, 0.35);
         z-index: 1000;
     }
 
     .modal-content {
-        background: white;
-        width: 450px;
-        max-width: 90%;
+        background: #ffffff;
+        color: #111827;
+        width: min(90vw, 450px);
         margin: 100px auto;
         padding: 20px;
         border-radius: 10px;
         text-align: center;
         box-shadow: 0 0 15px rgba(0,0,0,0.3);
+        display: flex;
+        flex-direction: column;
+        gap: 12px;
+    }
+
+    .modal-content .cancel-btn {
+        display: inline-block;
+        margin-left: auto;
+    }
+
+    .modal-content > * {
+        width: 100%;
+        box-sizing: border-box;
     }
 
     .modal-content h2 {
-        color: purple;
+        color: #111827;
+    }
+
+    .win-modal-content {
+        max-width: 320px;
+    }
+
+    .print-modal-content {
+        max-width: 360px;
+        text-align: left;
+        min-height: 260px;
+        justify-content: space-between;
+    }
+
+    .user-modal-content {
+        max-width: 380px;
+        width: min(92vw, 380px);
+        text-align: left;
+        padding: 20px 18px;
+        max-height: min(82vh, 620px);
+        display: flex;
+        flex-direction: column;
+        box-sizing: border-box;
+    }
+
+    .user-modal-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: flex-start;
+        gap: 10px;
+        margin-bottom: 10px;
+    }
+
+    .user-modal-header h2 {
+        margin: 0 0 4px;
+    }
+
+    .user-modal-subtitle {
+        margin: 0;
+        color: #4b5563;
+        font-size: 0.95rem;
+    }
+
+    .user-edit-btn {
+        background: #111827;
+        color: white;
+        padding: 8px 10px;
+        font-size: 13px;
+    }
+
+    .name-display-row {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        padding: 10px 12px;
+        background: #f3f4f6;
+        border-radius: 10px;
+        margin-bottom: 10px;
+    }
+
+    .name-edit-row {
+        display: flex;
+        flex-direction: column;
+        gap: 8px;
+        padding: 10px 12px;
+        background: #f9fafb;
+        border: 1px solid #e5e7eb;
+        border-radius: 10px;
+        margin-bottom: 10px;
+    }
+
+    .user-modal-name {
+        font-size: 1.05rem;
+        font-weight: 700;
+        color: #111827;
+    }
+
+    .user-history-card {
+        background: #ffffff;
+        border: 1px solid #e5e7eb;
+        border-radius: 10px;
+        padding: 12px;
+        max-height: min(34vh, 220px);
+        overflow-y: auto;
+        flex: 1 1 auto;
+        min-height: 0;
+    }
+
+    .user-history-card h3 {
+        margin: 0 0 8px;
+        font-size: 1rem;
+        color: #111827;
+    }
+
+    .user-history-list {
+        list-style: none;
+        padding: 0;
+        margin: 0;
+        display: flex;
+        flex-direction: column;
+        gap: 8px;
+    }
+
+    .user-history-list li {
+        padding: 8px 10px;
+        border: 1px solid #e5e7eb;
+        border-radius: 8px;
+        background: #f9fafb;
+        font-size: 14px;
+    }
+
+    .print-modal-content h2,
+    .print-modal-content p {
+        text-align: center;
+    }
+
+    .print-modal-content .print-options {
+        display: flex;
+        flex-direction: column;
+        gap: 10px;
+        margin-top: 14px;
+    }
+
+    .print-modal-content .print-options button {
+        width: 100%;
+    }
+
+    .print-modal-content .modal-footer {
+        display: flex !important;
+        justify-content: flex-end !important;
+        align-items: center !important;
+        margin-top: auto !important;
+        padding-top: 12px !important;
+        border-top: 1px solid #e5e7eb !important;
+        width: 100% !important;
+        box-sizing: border-box !important;
+    }
+
+    .modal-footer {
+        display: flex;
+        justify-content: flex-end;
+        align-items: center;
+        gap: 10px;
+        margin-top: auto;
+        flex-wrap: wrap;
+        padding-top: 12px;
+        border-top: 1px solid #e5e7eb;
+        width: 100%;
+        box-sizing: border-box;
+    }
+
+    .modal-footer button {
+        padding: 10px 14px;
+        font-size: 15px;
+        cursor: pointer;
+    }
+
+    .modal-footer .cancel-btn {
+        margin-left: auto;
+        background: #111827;
+        color: #ffffff;
+        border: 1px solid #111827;
+    }
+
+    .mobile-bottom-bar {
+        display: none;
+    }
+
+    @media (max-width: 480px) {
+        html, body {
+            height: 100%;
+            overflow-x: hidden;
+        }
+
+        body {
+            margin: 8px 8px 112px 8px;
+            padding-bottom: 96px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: flex-start;
+            box-sizing: border-box;
+        }
+
+        .action-panel {
+            padding: 12px;
+            display: none;
+        }
+
+        .mobile-bottom-bar {
+            display: flex;
+            position: fixed;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            z-index: 1000;
+            background: #111827;
+            padding: 8px 6px;
+            gap: 0;
+            justify-content: space-around;
+            box-shadow: 0 -1px 0 rgba(255,255,255,0.08);
+        }
+
+        .bottom-btn {
+            flex: 1;
+            background: transparent;
+            color: white;
+            border: none;
+            border-radius: 0;
+            padding: 10px 6px;
+            font-size: 14px;
+            box-shadow: none;
+            position: relative;
+        }
+
+        .bottom-btn + .bottom-btn::before {
+            content: "";
+            position: absolute;
+            left: 0;
+            top: 6px;
+            bottom: 6px;
+            width: 1px;
+            background: rgba(255,255,255,0.16);
+        }
+
+        .action-row,
+        .pdf-actions {
+            flex-direction: column;
+            align-items: stretch;
+        }
+
+        .primary-btn,
+        .secondary-btn,
+        .pdf-btn {
+            width: 100%;
+        }
+
+        .board4x4 {
+            width: min(74vw, 188px);
+            max-width: 188px;
+            max-height: min(40dvh, 188px);
+            padding: 8px;
+            margin: 6px auto 4px auto;
+        }
+
+        .tiles {
+            gap: 6px;
+            margin-top: 4px;
+            padding-bottom: 8px;
+        }
+
+        .tile {
+            width: min(34vw, 92px);
+            max-width: 92px;
+            max-height: 92px;
+        }
+    }
+
+    @media (max-height: 700px) {
+        body {
+            margin: 8px;
+        }
+
+        h2, h3 {
+            margin: 6px 0;
+        }
+
+        .board4x4 {
+            width: min(70vh, 260px);
+            height: min(70vh, 260px);
+            max-width: 260px;
+            max-height: 260px;
+            margin: 8px auto;
+        }
+
+        .tiles {
+            gap: 40px;
+            margin-top: 8px;
+        }
+
+        .tile {
+            width: min(32vh, 110px);
+            height: min(32vh, 110px);
+            max-width: 110px;
+            max-height: 110px;
+        }
     }

@@ -2,6 +2,7 @@
 <html>
 <head>
 <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
 <title>Pattern Puzzle</title>
 
 <link rel="stylesheet" href="styles.css">
@@ -9,7 +10,14 @@
 </head>
 <body>
 
-<h2>Pattern Puzzle</h2>
+<h2 class="app-title">Pattern Puzzle</h2>
+
+<div class="game-info">
+    <div class="timer-box">
+        <span class="timer-label">Time</span>
+        <span id="timer" class="timer-value">00:00</span>
+    </div>
+</div>
 
 <h3>Target Pattern</h3>
 <div id="target" class="board4x4"></div>
@@ -17,16 +25,25 @@
 <h3>Arrange the Tiles</h3>
 <div id="tiles" class="tiles"></div>
 
-<br>
-<button onclick="newGame()">New Puzzle</button>
+<div class="action-panel">
+    <div class="action-row">
+        <button class="primary-btn" onclick="newGame()">New Puzzle</button>
+        <button class="secondary-btn" onclick="showFactModal()">🧠 Did You Know?</button>
+    </div>
 
-<button onclick="showFactModal()">🧠 Did You Know?</button>
+    <div class="pdf-actions">
+        <button class="pdf-btn primary" onclick="showPrintOptions()">
+            Print
+        </button>
+    </div>
+</div>
 
-<button onclick="generateAllPuzzlesPDF()">Generate All Puzzles PDF</button>
-
-<button onclick="generateUniquePuzzlesPDF()">
-    Generate 24 Unique Puzzles PDF
-</button>
+<div class="mobile-bottom-bar">
+    <button class="bottom-btn" onclick="newGame()">New</button>
+    <button class="bottom-btn" onclick="showFactModal()">Facts</button>
+    <button class="bottom-btn" onclick="showPrintOptions()">Print</button>
+    <button class="bottom-btn" onclick="showUserModal()">User</button>
+</div>
 
 <p id="message"></p>
 
@@ -38,12 +55,76 @@
 
         <p id="factText"></p>
 
-        <button onclick="closeFactModal()">
-            Close
-        </button>
+        <div class="modal-footer">
+            <button class="cancel-btn" onclick="closeFactModal()">
+                Close
+            </button>
+        </div>
 
     </div>
 
+</div>
+
+<div id="winModal" class="modal">
+    <div class="modal-content win-modal-content">
+        <h2 id="winModalTitle"></h2>
+        <p id="winModalMessage"></p>
+        <div class="modal-footer">
+            <button onclick="startNewGameFromModal()">New Game</button>
+            <button class="cancel-btn" onclick="closeWinModal()">Close</button>
+        </div>
+    </div>
+</div>
+
+<div id="printModal" class="modal">
+    <div class="modal-content print-modal-content">
+        <h2>Print Options</h2>
+        <p>Choose which puzzle set you want to print.</p>
+
+        <div class="print-options">
+            <button class="primary-btn" onclick="generateAllPuzzlesPDF(); closePrintModal()">
+                All Combinations
+            </button>
+            <button class="secondary-btn" onclick="generateUniquePuzzlesPDF(); closePrintModal()">
+                24 Unique Combinations
+            </button>
+        </div>
+
+        <div class="modal-footer">
+            <button class="cancel-btn" onclick="closePrintModal()">Cancel</button>
+        </div>
+    </div>
+</div>
+
+<div id="userModal" class="modal">
+    <div class="modal-content user-modal-content">
+        <div class="user-modal-header">
+            <div>
+                <h2>User Profile</h2>
+                <p class="user-modal-subtitle">Track your name and past results</p>
+            </div>
+            <button class="user-edit-btn" onclick="toggleNameEdit()">Edit</button>
+        </div>
+
+        <div id="nameDisplayRow" class="name-display-row">
+            <span class="user-modal-name" id="userModalName">Player</span>
+        </div>
+
+        <div id="nameEditRow" class="name-edit-row" style="display:none;">
+            <label for="playerName" class="player-label">Player Name</label>
+            <input id="playerName" class="player-input" type="text" placeholder="Enter your name" maxlength="24">
+            <button class="primary-btn" onclick="saveUserName()">Save</button>
+        </div>
+
+        <div class="user-history-card">
+            <h3>Game History</h3>
+            <ul id="userHistoryList" class="user-history-list"></ul>
+        </div>
+
+        <div class="modal-footer">
+            <button class="cancel-btn" onclick="closeUserModal()">Close</button>
+        </div>
+    </div>
 </div>
 
 <script src="script.js" defer></script>

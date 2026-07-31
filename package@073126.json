@@ -15,15 +15,12 @@
   "keywords": [],
   "author": "",
   "license": "ISC",
-  "type": "module",
+  "type": "commonjs",
   "bugs": {
     "url": "https://github.com/amarildogolloshi/PatternBlockPuzzle/issues"
   },
   "homepage": "https://github.com/amarildogolloshi/PatternBlockPuzzle#readme",
   "devDependencies": {
     "gh-pages": "^6.3.0"
-  },
-  "dependencies": {
-    "express": "^5.2.1"
   }
 }

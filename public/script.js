@@ -1,6 +1,10 @@
 let solution = [];
 let tiles = [];
 let selected = null;
+let timerInterval = null;
+let elapsedSeconds = 0;
+const STORAGE_KEY = "patternPuzzleState";
+const HISTORY_KEY = "patternPuzzleHistory";
 
 const createTile = () => {
   const tile = [false, false, false, false];
@@ -42,6 +46,159 @@ function buildTargetPattern() {
     return pattern;
 }
 
+function formatTime(totalSeconds) {
+    const minutes = String(Math.floor(totalSeconds / 60)).padStart(2, "0");
+    const seconds = String(totalSeconds % 60).padStart(2, "0");
+    return `${minutes}:${seconds}`;
+}
+
+function updateTimer() {
+    elapsedSeconds += 1;
+    document.getElementById("timer").textContent = formatTime(elapsedSeconds);
+    saveState();
+}
+
+function startTimer() {
+    clearInterval(timerInterval);
+    elapsedSeconds = 0;
+    document.getElementById("timer").textContent = formatTime(elapsedSeconds);
+    timerInterval = setInterval(updateTimer, 1000);
+}
+
+function saveState() {
+    const playerName = document.getElementById("playerName").value.trim();
+    const state = {
+        playerName,
+        solution,
+        tiles,
+        selected,
+        elapsedSeconds,
+        solved: false
+    };
+
+    localStorage.setItem(STORAGE_KEY, JSON.stringify(state));
+}
+
+function saveHistoryTime() {
+    const playerName = document.getElementById("playerName").value.trim() || "Player";
+    const history = JSON.parse(localStorage.getItem(HISTORY_KEY) || "[]");
+    const completedAt = new Date().toLocaleString();
+
+    history.push({
+        playerName,
+        time: formatTime(elapsedSeconds),
+        completedAt
+    });
+
+    if (history.length > 8) {
+        history.shift();
+    }
+
+    localStorage.setItem(HISTORY_KEY, JSON.stringify(history));
+}
+
+function showUserModal() {
+    const name = document.getElementById("playerName").value.trim() || "Player";
+    const history = JSON.parse(localStorage.getItem(HISTORY_KEY) || "[]");
+    const list = document.getElementById("userHistoryList");
+
+    document.getElementById("userModalName").textContent = name;
+
+    if (history.length === 0) {
+        list.innerHTML = "<li>No completed games yet.</li>";
+    } else {
+        list.innerHTML = history
+            .slice()
+            .reverse()
+            .map(item => `<li>${item.playerName} • ${item.time} • ${item.completedAt}</li>`)
+            .join("");
+    }
+
+    document.getElementById("userModal").style.display = "flex";
+}
+
+function closeUserModal() {
+    document.getElementById("userModal").style.display = "none";
+    document.getElementById("nameEditRow").style.display = "none";
+    document.getElementById("nameDisplayRow").style.display = "flex";
+}
+
+function toggleNameEdit() {
+    const editRow = document.getElementById("nameEditRow");
+    const displayRow = document.getElementById("nameDisplayRow");
+    const input = document.getElementById("playerName");
+
+    if (editRow.style.display === "none") {
+        input.value = document.getElementById("userModalName").textContent;
+        editRow.style.display = "flex";
+        displayRow.style.display = "none";
+        input.focus();
+    } else {
+        editRow.style.display = "none";
+        displayRow.style.display = "flex";
+    }
+}
+
+function saveUserName() {
+    const input = document.getElementById("playerName");
+    const name = input.value.trim() || "Player";
+
+    input.value = name;
+    document.getElementById("userModalName").textContent = name;
+    saveState();
+    toggleNameEdit();
+}
+
+function loadState() {
+    const saved = localStorage.getItem(STORAGE_KEY);
+
+    if (!saved) {
+        return null;
+    }
+
+    try {
+        const state = JSON.parse(saved);
+        if (state && typeof state === "object") {
+            return state;
+        }
+    } catch (error) {
+        console.warn("Unable to load puzzle state", error);
+    }
+
+    return null;
+}
+
+function stopTimer() {
+    clearInterval(timerInterval);
+    timerInterval = null;
+}
+
+function restoreState(state) {
+    if (!state) {
+        return false;
+    }
+
+    const playerNameInput = document.getElementById("playerName");
+    if (state.playerName) {
+        playerNameInput.value = state.playerName;
+    }
+
+    if (Array.isArray(state.solution) && Array.isArray(state.tiles)) {
+        solution = state.solution;
+        tiles = state.tiles;
+        selected = state.selected ?? null;
+        elapsedSeconds = state.elapsedSeconds ?? 0;
+
+        document.getElementById("timer").textContent = formatTime(elapsedSeconds);
+        drawTarget();
+        drawTiles();
+        startTimer();
+        return true;
+    }
+
+    return false;
+}
+
 function drawTarget() {
 
     const target = document.getElementById("target");
@@ -71,6 +228,8 @@ function drawTiles() {
         tileDiv.className =
             "tile" +
             (selected === index ? " selected" : "");
+        tileDiv.dataset.index = index;
+        tileDiv.style.touchAction = "none";
 
         tile.forEach(cell => {
 
@@ -82,6 +241,82 @@ function drawTiles() {
                 (cell ? "black" : "white");
 
             tileDiv.appendChild(div);
+        });
+
+        tileDiv.addEventListener("pointerdown", (event) => {
+            event.preventDefault();
+            tileDiv.setPointerCapture(event.pointerId);
+            tileDiv.dataset.dragSource = "true";
+            tileDiv.dataset.dragStartX = event.clientX;
+            tileDiv.dataset.dragStartY = event.clientY;
+            tileDiv.dataset.dragMoved = "false";
+            tileDiv.classList.add("dragging");
+            document.querySelectorAll(".tile.drag-over").forEach(otherTile => {
+                otherTile.classList.remove("drag-over");
+            });
+        });
+
+        tileDiv.addEventListener("pointermove", (event) => {
+            if (tileDiv.dataset.dragSource !== "true") {
+                return;
+            }
+
+            const startX = Number(tileDiv.dataset.dragStartX || event.clientX);
+            const startY = Number(tileDiv.dataset.dragStartY || event.clientY);
+            const movedX = event.clientX - startX;
+            const movedY = event.clientY - startY;
+
+            if (Math.abs(movedX) > 8 || Math.abs(movedY) > 8) {
+                tileDiv.dataset.dragMoved = "true";
+                tileDiv.classList.add("dragging");
+
+                const targetElement = document.elementFromPoint(event.clientX, event.clientY);
+                const targetTile = targetElement?.closest(".tile");
+
+                document.querySelectorAll(".tile.drag-over").forEach(otherTile => {
+                    otherTile.classList.remove("drag-over");
+                });
+
+                if (targetTile && targetTile !== tileDiv) {
+                    targetTile.classList.add("drag-over");
+                }
+            }
+        });
+
+        tileDiv.addEventListener("pointerup", (event) => {
+            if (tileDiv.dataset.dragSource !== "true") {
+                return;
+            }
+
+            const moved = tileDiv.dataset.dragMoved === "true";
+            const targetElement = document.elementFromPoint(event.clientX, event.clientY);
+            const targetTile = targetElement?.closest(".tile");
+            const targetIndex = targetTile ? Number(targetTile.dataset.index) : null;
+
+            document.querySelectorAll(".tile.drag-over").forEach(otherTile => {
+                otherTile.classList.remove("drag-over");
+            });
+            tileDiv.classList.remove("dragging");
+            tileDiv.dataset.dragSource = "false";
+            tileDiv.dataset.dragMoved = "false";
+
+            if (moved && targetIndex !== null && targetIndex !== index) {
+                [tiles[index], tiles[targetIndex]] = [tiles[targetIndex], tiles[index]];
+                selected = null;
+                checkWin();
+                drawTiles();
+            } else {
+                selectTile(index);
+            }
+        });
+
+        tileDiv.addEventListener("pointercancel", () => {
+            document.querySelectorAll(".tile.drag-over").forEach(otherTile => {
+                otherTile.classList.remove("drag-over");
+            });
+            tileDiv.classList.remove("dragging");
+            tileDiv.dataset.dragSource = "false";
+            tileDiv.dataset.dragMoved = "false";
         });
 
         tileDiv.onclick = () => selectTile(index);
@@ -129,16 +364,32 @@ function checkWin() {
     const message = document.getElementById("message");
 
     if (solved) {
-        message.innerHTML = `
-            🎉 Congratulations!<br>
-            You solved the puzzle!
-        `;
-
-        message.style.color = "green";
-        message.style.fontSize = "24px";
+        stopTimer();
+        saveHistoryTime();
+        showWinModal();
+        message.textContent = "";
     } else {
         message.textContent = "";
     }
+}
+
+function showWinModal() {
+    const modal = document.getElementById("winModal");
+    const title = document.getElementById("winModalTitle");
+    const message = document.getElementById("winModalMessage");
+
+    title.textContent = "🎉 Congratulations!";
+    message.innerHTML = `You solved the puzzle in <strong>${formatTime(elapsedSeconds)}</strong>!`;
+    modal.style.display = "flex";
+}
+
+function closeWinModal() {
+    document.getElementById("winModal").style.display = "none";
+}
+
+function startNewGameFromModal() {
+    closeWinModal();
+    newGame();
 }
 
 
@@ -157,11 +408,21 @@ function newGame() {
 
     drawTarget();
     drawTiles();
+    startTimer();
+    saveState();
 
     document.getElementById("message").textContent = "";
 }
 
-newGame();
+const playerNameInput = document.getElementById("playerName");
+playerNameInput.addEventListener("input", saveState);
+
+const restoredState = loadState();
+if (restoredState) {
+    restoreState(restoredState);
+} else {
+    newGame();
+}
 
 const facts = [
     "There are 256 possible puzzle patterns when duplicate tiles are allowed.",
@@ -202,12 +463,30 @@ function closeFactModal() {
     document.getElementById("factModal").style.display = "none";
 }
 
+function showPrintOptions() {
+    document.getElementById("printModal").style.display = "flex";
+}
+
+function closePrintModal() {
+    document.getElementById("printModal").style.display = "none";
+}
+
 window.onclick = function(event) {
 
     const modal = document.getElementById("factModal");
+    const printModal = document.getElementById("printModal");
+    const userModal = document.getElementById("userModal");
 
     if (event.target === modal) {
         modal.style.display = "none";
+    }
+
+    if (event.target === printModal) {
+        printModal.style.display = "none";
+    }
+
+    if (event.target === userModal) {
+        userModal.style.display = "none";
     }
 }
 
@@ -258,7 +537,7 @@ function createCell(value) {
     `;
 }
 
-function createReusableTilesPage() {
+function createReusableTilesPageForAllPuzzles() {
     return `
         <h2>Reusable Puzzle Tiles</h2>
 
@@ -480,7 +759,7 @@ function generateUniquePuzzlesPDF() {
     let puzzlesHtml = "";
 
     // First page: reusable cut-out tiles
-    puzzlesHtml += createReusableTilesPage();
+    puzzlesHtml += createReusableTilesPageForAllPuzzles();
 
     // Next pages: only target patterns
     uniquePuzzles.forEach(function(puzzle, index) {
@@ -583,12 +862,17 @@ function generateUniquePuzzlesPDF() {
                 }
 
                 .pdf-black {
-                   background-color: black !important;
+                    background-color: #000 !important;
+                    color: #000;
+                    -webkit-print-color-adjust: exact !important;
+                    print-color-adjust: exact !important;
                 }
 
                 .pdf-white {
-                    color: white;
-                    background-color: white;
+                    color: #fff;
+                    background-color: #fff !important;
+                    -webkit-print-color-adjust: exact !important;
+                    print-color-adjust: exact !important;
                 }
 
                 button {
